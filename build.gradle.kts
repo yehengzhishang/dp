@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "1.2.51"
 }
 
-group = "org.zz"
+group = "org.yu.zz"
 version = "0.1"
 
 repositories {
