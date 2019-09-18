@@ -35,6 +35,17 @@ interface Subject<OD, O : Observer<OD>> {
 
 interface SubSelf<O> : Subject<O, Observer<O>>
 
+interface ObserverList<S> : Observer<S> {
+    val list: MutableList<Observer<S>>
+    override fun update(s: S) {
+        for (observer in list) {
+            observer.update(s)
+        }
+    }
+
+
+}
+
 class View : SubSelf<View> {
     override val w: Wrapper<Observer<View>> = Wrapper()
     fun performClick() {
