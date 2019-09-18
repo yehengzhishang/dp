@@ -1,8 +1,6 @@
 package org.zz.dp.chainOfResponsibility
 
-import java.util.*
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.collections.ArrayList
 
 //自己的想法，看看就好
 fun main(args: Array<String>) {
