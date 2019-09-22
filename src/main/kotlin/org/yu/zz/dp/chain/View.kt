@@ -1,6 +1,6 @@
-package org.zz.dp.chainOfResponsibility
+package org.yu.zz.dp.chain
 
-import org.zz.dp.chainOfResponsibility.TouchEvent.Companion.ACTION_UP
+import org.yu.zz.dp.chain.TouchEvent.Companion.ACTION_UP
 
 //安卓View中的事件分发，据说很像责任链
 fun main(args: Array<String>) {

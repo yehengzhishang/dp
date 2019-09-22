@@ -1,4 +1,4 @@
-package org.zz.dp.chainOfResponsibility
+package org.yu.zz.dp.chain
 
 fun main(args: Array<String>) {
     val low = LowLevelHandler("low")

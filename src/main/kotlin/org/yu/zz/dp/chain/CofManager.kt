@@ -1,4 +1,4 @@
-package org.zz.dp.chainOfResponsibility
+package org.yu.zz.dp.chain
 
 import java.util.concurrent.ThreadLocalRandom
 
