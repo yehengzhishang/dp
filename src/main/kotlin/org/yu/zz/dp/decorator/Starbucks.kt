@@ -1,5 +1,10 @@
 package org.yu.zz.dp.decorator
 
+fun main(args: Array<String>) {
+    var target: Beverage = HouseBlend()
+    target = Mocha(target)
+    println("当前的咖啡 ： ${target.description()} ：需要花费 : $ ${target.coast()}")
+}
 
 interface Beverage {
     fun description(): String
@@ -9,6 +14,8 @@ interface Beverage {
 abstract class CondimentDecorator(private val beverage: Beverage?) : Beverage {
 
     fun getBeverageCoast(): Float = beverage?.coast() ?: 0F
+
+    fun getBeverageDes(): String = beverage?.description() ?: ""
 }
 
 class Espresso : Beverage {
@@ -32,7 +39,7 @@ class HouseBlend : Beverage {
 }
 
 class Mocha(beverage: Beverage?) : CondimentDecorator(beverage) {
-    override fun description(): String = "摩卡"
+    override fun description(): String = "摩卡" + getBeverageDes()
 
     override fun coast(): Float = (0.20 + getBeverageCoast()).toFloat()
 }
