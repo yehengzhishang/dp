@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     view.performClick()
 }
 
-interface Observer<S> {
+interface WeatherObserver<S> {
     fun update(s: S)
 }
 
@@ -15,7 +15,7 @@ class Wrapper<O> {
     var o: O? = null
 }
 
-interface Subject<OD, O : Observer<OD>> {
+interface Subject<OD, O : WeatherObserver<OD>> {
     val w: Wrapper<O>
 
     fun registerObserver(o: O) {
@@ -33,10 +33,10 @@ interface Subject<OD, O : Observer<OD>> {
 
 }
 
-interface SubSelf<O> : Subject<O, Observer<O>>
+interface SubSelf<O> : Subject<O, WeatherObserver<O>>
 
-interface ObserverList<S> : Observer<S> {
-    val list: MutableList<Observer<S>>
+interface ObserverList<S> : WeatherObserver<S> {
+    val list: MutableList<WeatherObserver<S>>
     override fun update(s: S) {
         for (observer in list) {
             observer.update(s)
@@ -47,13 +47,13 @@ interface ObserverList<S> : Observer<S> {
 }
 
 class View : SubSelf<View> {
-    override val w: Wrapper<Observer<View>> = Wrapper()
+    override val w: Wrapper<WeatherObserver<View>> = Wrapper()
     fun performClick() {
         notifyObserver(this)
     }
 }
 
-interface OnClickListener : Observer<View>
+interface OnClickListener : WeatherObserver<View>
 
 class TallyListener : OnClickListener {
     private var cnt = 0;
