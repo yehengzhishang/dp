@@ -1,9 +1,12 @@
 package org.yu.zz.dp.observer
 
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 /**
  *  rx 主要实现
  *  只保留 最基本的onNext
- *  当前实现 just map ,自创Pair操作符
+ *  当前实现 just map subscribeOn ObserverOn,自创Pair操作符
  *
  * 已知忽略内容 PECS
  * DISABLE
@@ -21,7 +24,7 @@ interface ObservableSource<T> {
 
 abstract class Observable<T> : ObservableSource<T> {
     override fun subscribe(observer: Observer<T>) {
-        // 原方法有种安全，线程校验，已知忽略
+        // 原方法非空安全，线程校验，已知忽略
         subscribeActual(observer)
     }
 
@@ -36,6 +39,14 @@ abstract class Observable<T> : ObservableSource<T> {
 
     fun <R> map(mapper: Function<T, R>): Observable<R> {
         return ObservableMap<T, R>(this, mapper)
+    }
+
+    fun subscribeOn(executorService: ExecutorService): Observable<T> {
+        return ObservableSubscribeOn(this, executorService)
+    }
+
+    fun observerOn(executorService: ExecutorService): Observable<T> {
+        return ObservableObserverOn(this, executorService)
     }
 }
 
@@ -87,10 +98,41 @@ class ObservablePair<T, R> constructor(private val upstream: ObservableSource<T>
     }
 }
 
+//      <editor-fold desc="subscribeOn">
+class SubscribeOnRunnable<T>(private val upstream: ObservableSource<T>, private val observer: Observer<T>) : Runnable {
+    override fun run() {
+        println("subscribe thread == ${Thread.currentThread().id}")
+        upstream.subscribe(observer)
+    }
+}
+
+class ObservableSubscribeOn<T>(private val upstream: ObservableSource<T>, private val executorService: ExecutorService) : Observable<T>() {
+    override fun subscribeActual(observer: Observer<T>) {
+        executorService.execute(SubscribeOnRunnable(upstream, observer))
+    }
+}
+//      </editor-fold desc="subscribeOn">
+
+// <editor-fold desc="ObserverOn">
+class ObserverOnObserver<T>(private val executorService: ExecutorService, private val observer: Observer<T>) : Observer<T> {
+    override fun onNext(t: T) {
+        executorService.execute { observer.onNext(t) }
+    }
+}
+
+class ObservableObserverOn<T>(private val upstream: ObservableSource<T>, private val executorService: ExecutorService) : Observable<T>() {
+    override fun subscribeActual(observer: Observer<T>) {
+        upstream.subscribe(ObserverOnObserver(executorService, observer))
+    }
+}
+// </editor-fold desc="ObserverOn">
+
 fun main(args: Array<String>) {
+    println("main 方法线程 == ${Thread.currentThread().id}")
     Observable.just(1)
             .map(object : Function<Int, String> {
                 override fun apply(t: Int): String {
+                    println("map 方法线程 == ${Thread.currentThread().id}")
                     return "$t === map"
                 }
             })
@@ -100,8 +142,12 @@ fun main(args: Array<String>) {
                     return ObservableJust(t.length)
                 }
             })
+            .subscribeOn(Executors.newCachedThreadPool())
+            // 不能切原线程原因是没有相应的looper (安卓相关)
+            .observerOn(Executors.newCachedThreadPool())
             .subscribe(object : Observer<Pair<String, Int>> {
                 override fun onNext(t: Pair<String, Int>) {
+                    println("onNext 方法线程 == ${Thread.currentThread().id}")
                     println("${t.first}的长度是${t.second}")
                 }
             })
