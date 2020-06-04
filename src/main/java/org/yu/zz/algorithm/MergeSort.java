@@ -13,7 +13,7 @@ public class MergeSort {
         if (l == h) {
             return new int[]{arr[l]};
         }
-        int mid = (l + (h - 1)) / 2;
+        int mid = l + (h - l) / 2;
         System.out.println("mid = " + mid + " l = " + l + " h = " + h);
         int[] arrLeft = sort(arr, l, mid);
         int[] arrRight = sort(arr, mid + 1, h);
