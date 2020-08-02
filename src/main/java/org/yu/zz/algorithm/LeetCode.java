@@ -1,6 +1,33 @@
 package org.yu.zz.algorithm;
 
+import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class LeetCode {
+
+    /**
+     * https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/
+     * <p>
+     * 给定一个二叉树，原地将它展开为一个单链表。
+     */
+    public static void flatten(TreeNode root) {
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        TreeNode result = new TreeNode(0, null, null);
+        while (!queue.isEmpty()) {
+            TreeNode treeNode = queue.pop();
+            if (treeNode.right != null) {
+                queue.addFirst(treeNode.right);
+            }
+            if (treeNode.left != null) {
+                queue.addFirst(treeNode.left);
+            }
+            result.right = treeNode;
+            result = treeNode;
+            result.left = null;
+        }
+    }
 
     /**
      * 剑指 Offer 11. 旋转数组的最小数字
@@ -20,5 +47,24 @@ public class LeetCode {
             }
         }
         return min;
+    }
+
+    static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
 }
