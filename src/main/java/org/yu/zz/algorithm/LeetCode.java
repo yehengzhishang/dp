@@ -1,8 +1,7 @@
 package org.yu.zz.algorithm;
 
 import java.util.LinkedList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Stack;
 
 public class LeetCode {
 
@@ -47,6 +46,47 @@ public class LeetCode {
             }
         }
         return min;
+    }
+
+    /**
+     * 栈排序
+     * 要求 只能new 出来一个栈,int 变量可以,别的数据结构不行
+     * 正序/逆序
+     */
+    public Stack<Integer> stackSort(Stack<Integer> src) {
+        Stack<Integer> result = new Stack<>();
+        while (!src.isEmpty()) {
+            Integer target = src.pop();
+            if (result.isEmpty()) {
+                result.push(target);
+                continue;
+            }
+
+            Integer current = result.pop();
+            int position = 1;
+            // 5 8
+            while (current > target) {
+                if (result.isEmpty()) {
+                    break;
+                }
+                src.push(current);
+                current = result.pop();
+                position++;
+            }
+            if (result.isEmpty()) {
+                result.push(target);
+                result.push(current);
+            } else {
+                result.push(current);
+                result.push(target);
+                position--;
+            }
+
+            for (int i = 0; i < position; i++) {
+                result.push(src.pop());
+            }
+        }
+        return result;
     }
 
     static class TreeNode {
