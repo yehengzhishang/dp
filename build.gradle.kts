@@ -15,7 +15,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.google.dagger","dagger","2.28.3")
     kapt("com.google.dagger","dagger-compiler","2.28.3")
-    testImplementation("junit", "junit", "4.12")
+    implementation("com.mpatric","mp3agic","0.9.1")
 }
 
 configure<JavaPluginConvention> {
